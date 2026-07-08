@@ -57,7 +57,23 @@ figma-tools/
 
 ## Screenshots
 
-> Add plugin screenshots here.
+### 1. Loading Analysis
+
+![Loading](docs/img1.png)
+
+Plugin sedang melakukan analisis desain menggunakan AI.
+
+### 2. Review Result
+
+![Result Top](docs/img2.png)
+
+Ringkasan hasil analisis UI/UX beserta skor evaluasi.
+
+### 3. Detailed Recommendations
+
+![Result Bottom](docs/img3.png)
+
+Daftar rekomendasi perbaikan yang dihasilkan AI berdasarkan analisis desain.
 
 ---
 

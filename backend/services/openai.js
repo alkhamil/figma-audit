@@ -9,7 +9,7 @@ async function reviewScreen(data) {
   const { selectedNode } = data;
 
   const completion = await client.chat.completions.create({
-    model: "openai/gpt-oss-120b:free",
+    model: "openai/gpt-oss-20b:free",
 
     messages: [
       {
