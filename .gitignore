@@ -1,0 +1,35 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build
+dist/
+build/
+coverage/
+
+# Environment
+.env
+.env.*
+
+# Logs
+logs/
+*.log
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Figma
+manifest.local.json
+
+# Cache
+.cache/
+.tmp/
+
+# OS
+Thumbs.db

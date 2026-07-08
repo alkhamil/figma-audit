@@ -1,0 +1,8 @@
+{
+    "name": "Figma Audit AIT",
+    "id": "figma-audit-ait",
+    "api": "1.0.0",
+    "main": "code.js",
+    "ui": "ui.html",
+    "editorType": ["figma"]
+  }

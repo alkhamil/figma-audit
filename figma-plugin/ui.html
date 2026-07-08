@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #f7f7f7;
+        padding: 14px;
+      }
+
+      .title {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+
+      .card {
+        background: white;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 10px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+
+      .frame {
+        font-size: 13px;
+        font-weight: 700;
+        color: #666;
+      }
+
+      .score-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .score-box {
+        background: linear-gradient(180deg, #ffffff, #f9fafb);
+        border: 1px solid #eee;
+        border-radius: 14px;
+        padding: 12px;
+        transition: 0.2s;
+      }
+
+      .score-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+      }
+
+      .score-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+      }
+
+      .score-value {
+        font-size: 18px;
+        font-weight: 800;
+        color: #111;
+      }
+
+      .score-badge {
+        font-size: 10px;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: #eee;
+        color: #666;
+      }
+
+      .good {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+
+      .warning {
+        background: #fef3c7;
+        color: #d97706;
+      }
+
+      .bad {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+
+      .section-title {
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #444;
+      }
+
+      .list {
+        font-size: 12px;
+        padding-left: 16px;
+        color: #333;
+      }
+
+      .list li {
+        margin-bottom: 4px;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        background: #18a0fb;
+        border: none;
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        background: #9ca3af;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      #emptyState {
+        text-align: center;
+        color: #666;
+      }
+
+      .spinner-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .spinner {
+        width: 26px;
+        height: 26px;
+        border: 3px solid #e5e7eb;
+        border-top: 3px solid #18a0fb;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading-text {
+        text-align: center;
+        font-size: 12px;
+        color: #666;
+        margin-top: 8px;
+      }
+
+      #errorBox {
+        border-left: 4px solid #dc2626;
+      }
+
+      #errorTitle {
+        font-weight: 700;
+        color: #dc2626;
+        font-size: 13px;
+      }
+
+      #errorText {
+        font-size: 12px;
+        color: #444;
+        margin-top: 6px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="title">UX Audit Dashboard</div>
+
+    <div class="card">
+      <div id="frameName" class="frame">Belum ada frame dipilih</div>
+    </div>
+
+    <div id="emptyState" class="card">
+      <div style="font-weight: 600; font-size: 13px">
+        Belum ada audit dilakukan
+      </div>
+      <div style="font-size: 12px; margin-top: 6px">
+        Klik <b>Audit Frame</b> untuk mulai analisis
+      </div>
+    </div>
+
+    <!-- ERROR -->
+    <div id="errorBox" class="card hidden">
+      <div id="errorTitle">Error</div>
+      <div id="errorText">-</div>
+    </div>
+
+    <div id="dashboard" class="hidden">
+      <div id="loadingState" class="card hidden">
+        <div class="spinner-wrap">
+          <div class="spinner"></div>
+        </div>
+        <div class="loading-text">Analyzing design...</div>
+      </div>
+
+      <div id="content">
+        <div class="card">
+          <div class="score-grid">
+            <div class="score-box">
+              <div class="score-top">
+                <div class="score-value" id="uxScore">-</div>
+              </div>
+              UX Experience
+            </div>
+
+            <div class="score-box">
+              <div class="score-top">
+                <div class="score-value" id="uiScore">-</div>
+              </div>
+              UI
+            </div>
+
+            <div class="score-box">
+              <div class="score-top">
+                <div class="score-value" id="a11yScore">-</div>
+              </div>
+              Accessibility
+            </div>
+
+            <div class="score-box">
+              <div class="score-top">
+                <div class="score-value" id="dsScore">-</div>
+              </div>
+              Design System
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">Summary</div>
+          <div id="summary">-</div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">UX Issues</div>
+          <ul id="uxIssues" class="list"></ul>
+        </div>
+
+        <div class="card">
+          <div class="section-title">UI Issues</div>
+          <ul id="uiIssues" class="list"></ul>
+        </div>
+
+        <div class="card">
+          <div class="section-title">Accessibility Issues</div>
+          <ul id="a11yIssues" class="list"></ul>
+        </div>
+
+        <div class="card">
+          <div class="section-title">Design System Issues</div>
+          <ul id="dsIssues" class="list"></ul>
+        </div>
+
+        <div class="card">
+          <div class="section-title">Recommendations</div>
+          <ul id="reco" class="list"></ul>
+        </div>
+      </div>
+    </div>
+
+    <button id="auditBtn" disabled>Audit Frame</button>
+
+    <script>
+      const frameName = document.getElementById("frameName");
+      const emptyState = document.getElementById("emptyState");
+      const errorBox = document.getElementById("errorBox");
+      const errorText = document.getElementById("errorText");
+
+      const dashboard = document.getElementById("dashboard");
+      const loadingState = document.getElementById("loadingState");
+      const content = document.getElementById("content");
+      const auditBtn = document.getElementById("auditBtn");
+
+      const uxScore = document.getElementById("uxScore");
+      const uiScore = document.getElementById("uiScore");
+      const a11yScore = document.getElementById("a11yScore");
+      const dsScore = document.getElementById("dsScore");
+
+      const summary = document.getElementById("summary");
+
+      const uxIssues = document.getElementById("uxIssues");
+      const uiIssues = document.getElementById("uiIssues");
+      const a11yIssues = document.getElementById("a11yIssues");
+      const dsIssues = document.getElementById("dsIssues");
+      const reco = document.getElementById("reco");
+
+      function showError(msg) {
+        errorBox.classList.remove("hidden");
+        errorText.textContent = msg || "Terjadi kesalahan";
+      }
+
+      function hideError() {
+        errorBox.classList.add("hidden");
+      }
+
+      function showOnlyEmpty() {
+        emptyState.classList.remove("hidden");
+        dashboard.classList.add("hidden");
+        errorBox.classList.add("hidden");
+      }
+
+      function showOnlyDashboard() {
+        emptyState.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+      }
+
+      function list(el, arr) {
+        el.innerHTML = "";
+        (arr || []).forEach((i) => {
+          const li = document.createElement("li");
+          li.textContent = i;
+          el.appendChild(li);
+        });
+      }
+
+      function setBtn(v) {
+        auditBtn.disabled = !v;
+      }
+
+      function setStatus(v) {
+        if (v >= 80) return { text: "Bagus", class: "good" };
+        if (v >= 60) return { text: "Cukup", class: "warning" };
+        return { text: "Buruk", class: "bad" };
+      }
+
+      window.onmessage = (e) => {
+        const msg = e.data.pluginMessage;
+
+        // =========================
+        // SELECTION
+        // =========================
+        if (msg.type === "selection-changed") {
+          frameName.textContent = msg.frameName
+            ? `[#] ${msg.frameName}`
+            : "No frame";
+
+          setBtn(!!msg.frameName);
+
+          if (msg.error) {
+            showError(msg.error);
+
+            emptyState.classList.add("hidden");
+            dashboard.classList.add("hidden");
+
+            return;
+          }
+
+          hideError();
+          showOnlyEmpty();
+        }
+
+        // =========================
+        // LOADING
+        // =========================
+        if (msg.type === "loading") {
+          hideError();
+          showOnlyDashboard();
+
+          loadingState.classList.remove("hidden");
+          content.classList.add("hidden");
+
+          auditBtn.disabled = true;
+        }
+
+        // =========================
+        // RESULT
+        // =========================
+        if (msg.type === "audit-result") {
+          const temp = msg.result;
+
+          if (temp?.error) {
+            showError(temp.error);
+
+            emptyState.classList.add("hidden");
+            dashboard.classList.add("hidden");
+
+            auditBtn.disabled = false;
+            return;
+          }
+
+          hideError();
+          showOnlyDashboard();
+
+          const d = msg.result;
+
+          uxScore.textContent = `${d.scores?.ux ?? 0}/10`;
+          uiScore.textContent = `${d.scores?.ui ?? 0}/10`;
+          a11yScore.textContent = `${d.scores?.accessibility ?? 0}/10`;
+          dsScore.textContent = `${d.scores?.design_system ?? 0}/10`;
+
+          summary.textContent = d.summary || "-";
+
+          list(uxIssues, d.ux_issues);
+          list(uiIssues, d.ui_issues);
+          list(a11yIssues, d.accessibility_issues);
+          list(dsIssues, d.design_system_issues);
+          list(reco, d.recommendations);
+
+          loadingState.classList.add("hidden");
+          content.classList.remove("hidden");
+          auditBtn.disabled = false;
+        }
+      };
+
+      auditBtn.onclick = () => {
+        if (auditBtn.disabled) return;
+
+        showOnlyDashboard();
+        loadingState.classList.remove("hidden");
+        content.classList.add("hidden");
+
+        auditBtn.disabled = true;
+
+        parent.postMessage(
+          {
+            pluginMessage: { type: "audit" },
+          },
+          "*"
+        );
+      };
+    </script>
+  </body>
+</html>
